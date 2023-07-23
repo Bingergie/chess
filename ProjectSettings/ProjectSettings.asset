@@ -12,7 +12,7 @@ PlayerSettings:
   targetDevice: 2
   useOnDemandResources: 0
   accelerometerFrequency: 60
-  companyName: DefaultCompany
+  companyName: Bingergie
   productName: Chess
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
@@ -730,7 +730,7 @@ PlayerSettings:
   apiCompatibilityLevel: 6
   activeInputHandler: 0
   windowsGamepadBackendHint: 0
-  cloudProjectId: 
+  cloudProjectId: 82c4c6bc-9dc8-4ee9-b4a5-87d18e22f379
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
   projectName: 

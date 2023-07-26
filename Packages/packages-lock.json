@@ -250,6 +250,13 @@
       },
       "url": "https://packages.unity.cn"
     },
+    "com.veriorpies.parrelsync": {
+      "version": "https://github.com/VeriorPies/ParrelSync.git?path=/ParrelSync",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "141b4e1e31966242a6fb7c495b52ac3d1221bc75"
+    },
     "net.tomweiland.riptide": {
       "version": "https://github.com/RiptideNetworking/Riptide.git?path=/Packages/Core#2.0.0",
       "depth": 0,

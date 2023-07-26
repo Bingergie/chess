@@ -14,9 +14,9 @@ namespace UI {
             GameManager.OnGameStart += OnGameStart;
         }
 
-        private void OnGameStart(object sender, bool isWhite) {
-            this.isWhite = isWhite;
-            state = isWhite ? PlayerState.Idle : PlayerState.Waiting;
+        private void OnGameStart(object sender, bool isWhiteSide) {
+            isWhite = isWhiteSide;
+            state = isWhiteSide ? PlayerState.Idle : PlayerState.Waiting;
         }
 
         private void Awake() {
@@ -45,7 +45,8 @@ namespace UI {
 
         private void IdleUpdate() {
             if (Input.GetMouseButtonDown(0)) {
-                if (GetMouseTarget(out var hit, LayerMask.GetMask("Board"))) {
+                if (GetMouseTarget(out var hit, LayerMask.GetMask("Board")) &&
+                    hit.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled) {
                     Debug.Log(hit.transform.gameObject.name); // todo: delete this
 
                     selectedSquare = BoardUtil.CoordFromName(hit.transform.gameObject.name);
@@ -55,6 +56,14 @@ namespace UI {
         }
 
         private void DraggingUpdate() {
+            /*if (Input.GetMouseButtonDown(0)) {
+                if (GetMouseTarget(out var hit, LayerMask.GetMask("Board")) &&
+                    BoardUtil.CoordFromName(hit.transform.gameObject.name) == selectedSquare) {
+                    selectedSquare = default;
+                    state = PlayerState.Idle;
+                    return;
+                }
+            }*/
             if (Input.GetMouseButton(0)) {
                 // OnMouseDrag?.Invoke(this, Input.mousePosition);
             }
@@ -69,6 +78,7 @@ namespace UI {
                     GameManager.Instance.TryMakeMove(new Move(selectedSquare,
                         BoardUtil.CoordFromName(hit.transform.gameObject.name)));
                 }
+
                 state = PlayerState.Idle;
                 selectedSquare = default;
             }

@@ -15,19 +15,23 @@ namespace Core {
             didInit = false;
         }
 
-        public bool TryMakeMove(bool isFromWhite, Move move) {
+        public bool TryMakeMove(bool isFromWhite, Move move, bool isWhiteTurn) {
             if (!didInit) {
                 Debug.LogError("Board.TryMakeMove: Board not initialized!");
                 return false;
             }
             
-            List<Move> moveList = MoveGenerator.GetLegalMoves(this, isFromWhite);
+            List<Move> moveList = MoveGenerator.GetLegalMoves(this, isFromWhite, isWhiteTurn);
             if (moveList.Contains(move)) {
                 // todo: make move
                 Debug.Log("Move made!: " + move.ToString());
                 return true;
             }
             // todo: delete this
+            if (isFromWhite != isWhiteTurn) {
+                Debug.Log("Not your turn!");
+                return false;
+            }
             // make the move
             pieceList[move.toIndex] = pieceList[move.fromIndex];
             pieceList[move.fromIndex] = default;

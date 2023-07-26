@@ -34,8 +34,9 @@ namespace Core {
                 Debug.LogError("ChessGame.TryMakeMove: Game not initialized!");
                 return false;
             }
-            var isSuccessful = board.TryMakeMove(isFromWhite, move);
+            var isSuccessful = board.TryMakeMove(isFromWhite, move, isWhiteTurn);
             if (isSuccessful) {
+                isWhiteTurn = !isWhiteTurn;
                 moveHistory.Push(move);
                 OnBoardUpdate?.Invoke(this, board.pieceList);
             }
@@ -50,7 +51,7 @@ namespace Core {
                 return null;
             }
             
-            return MoveGenerator.GetLegalMoves(board, isFromWhite);
+            return MoveGenerator.GetLegalMoves(board, isFromWhite, isWhiteTurn);
         }
     }
 

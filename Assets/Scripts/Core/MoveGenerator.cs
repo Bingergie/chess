@@ -34,7 +34,7 @@ namespace Core {
             return moveList;
         }*/
 
-        public static List<Move> GetLegalMoves(Board board, bool isFromWhite) {
+        public static List<Move> GetLegalMoves(Board board, bool isFromWhite, bool isWhiteTurn) {
             return new List<Move>() { new Move() };
         }
     }

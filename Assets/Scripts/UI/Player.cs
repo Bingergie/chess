@@ -6,9 +6,9 @@ namespace UI {
     [RequireComponent(typeof(Camera))]
     public class Player : MonoBehaviour {
         [HideInInspector] public bool isWhite;
-        private PlayerState state;
-        private Coord selectedSquare;
-        private new Camera camera;
+        private PlayerState _state;
+        private Coord _selectedSquare;
+        private Camera _camera;
 
         private void Start() {
             GameManager.OnGameStart += OnGameStart;
@@ -16,22 +16,22 @@ namespace UI {
 
         private void OnGameStart(object sender, bool isWhiteSide) {
             isWhite = isWhiteSide;
-            state = isWhiteSide ? PlayerState.Idle : PlayerState.Waiting;
+            _state = isWhiteSide ? PlayerState.Idle : PlayerState.Waiting;
         }
 
         private void Awake() {
-            camera = GetComponent<Camera>();
+            _camera = GetComponent<Camera>();
         }
 
         public bool GetMouseTarget(out GameObject target, LayerMask layerMask = default) {
-            Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+            Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
             bool didHit = Physics.Raycast(ray, out var hit, Mathf.Infinity, layerMask);
             target = didHit ? hit.transform.gameObject : null;
             return didHit;
         }
 
         private void Update() {
-            switch (state) {
+            switch (_state) {
                 case PlayerState.Idle:
                     IdleUpdate();
                     break;
@@ -49,8 +49,8 @@ namespace UI {
                     hit.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled) {
                     Debug.Log(hit.transform.gameObject.name); // todo: delete this
 
-                    selectedSquare = BoardUtil.CoordFromName(hit.transform.gameObject.name);
-                    state = PlayerState.Dragging;
+                    _selectedSquare = BoardUtil.CoordFromName(hit.transform.gameObject.name);
+                    _state = PlayerState.Dragging;
                 }
             }
         }
@@ -70,17 +70,17 @@ namespace UI {
 
             if (Input.GetMouseButtonUp(0)) {
                 if (GetMouseTarget(out var hit, LayerMask.GetMask("Board"))) {
-                    if (BoardUtil.CoordFromName(hit.transform.gameObject.name) == selectedSquare) {
+                    if (BoardUtil.CoordFromName(hit.transform.gameObject.name) == _selectedSquare) {
                         return;
                     }
 
                     // Debug.Log(hit.transform.gameObject.name); // todo: delete this
-                    GameManager.Instance.TryMakeMove(new Move(selectedSquare,
+                    GameManager.Instance.TryMakeMove(new Move(_selectedSquare,
                         BoardUtil.CoordFromName(hit.transform.gameObject.name)));
                 }
 
-                state = PlayerState.Idle;
-                selectedSquare = default;
+                _state = PlayerState.Idle;
+                _selectedSquare = default;
             }
         }
     }

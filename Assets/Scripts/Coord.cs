@@ -2,20 +2,20 @@ using System;
 
 public readonly struct Coord : IComparable<Coord>, IEquatable<Coord> {
 
-    public readonly int fileIndex;
-    public readonly int rankIndex;
+    public readonly int FileIndex;
+    public readonly int RankIndex;
 
     public Coord (int fileIndex, int rankIndex) {
-        this.fileIndex = fileIndex;
-        this.rankIndex = rankIndex;
+        FileIndex = fileIndex;
+        RankIndex = rankIndex;
     }
 
     public bool IsLightSquare () {
-        return (fileIndex + rankIndex) % 2 != 0;
+        return (FileIndex + RankIndex) % 2 != 0;
     }
 
     public int CompareTo (Coord other) {
-        return (fileIndex == other.fileIndex && rankIndex == other.rankIndex) ? 0 : 1;
+        return (FileIndex == other.FileIndex && RankIndex == other.RankIndex) ? 0 : 1;
     }
     
     public static bool operator == (Coord a, Coord b) {
@@ -27,7 +27,7 @@ public readonly struct Coord : IComparable<Coord>, IEquatable<Coord> {
     }
     
     public bool Equals(Coord other) {
-        return fileIndex == other.fileIndex && rankIndex == other.rankIndex;
+        return FileIndex == other.FileIndex && RankIndex == other.RankIndex;
     }
 
     public override bool Equals(object obj) {
@@ -35,6 +35,6 @@ public readonly struct Coord : IComparable<Coord>, IEquatable<Coord> {
     }
 
     public override int GetHashCode() {
-        return HashCode.Combine(fileIndex, rankIndex);
+        return HashCode.Combine(FileIndex, RankIndex);
     }
 }

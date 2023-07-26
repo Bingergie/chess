@@ -6,39 +6,39 @@ namespace Core {
     public class ChessGame {
         public event EventHandler<Piece[]> OnBoardUpdate;
 
-        private Board board;
-        private ChessGameBaseState currentState;
-        private Dictionary<Type, ChessGameBaseState> stateDictionary;
-        private bool didInit;
-        private bool isWhiteTurn;
+        private Board _board;
+        private ChessGameBaseState _currentState;
+        private Dictionary<Type, ChessGameBaseState> _stateDictionary;
+        private bool _didInit;
+        private bool _isWhiteTurn;
 
         public Stack<Move> moveHistory { get; private set; }
 
         public ChessGame() {
-            board = new Board(8);
-            stateDictionary = new Dictionary<Type, ChessGameBaseState>() {
+            _board = new Board(8);
+            _stateDictionary = new Dictionary<Type, ChessGameBaseState>() {
             };
         }
 
         public void Init() {
-            board.Init();
+            _board.Init();
             moveHistory = new Stack<Move>();
             // currentState = new ChessGamePlayingState();
             // currentState.Enter(this);
-            didInit = true;
+            _didInit = true;
         }
 
         // todo: make a faster version with piece or pieceName as parameter
         public bool TryMakeMove(bool isFromWhite, Move move) {
-            if (!didInit) {
+            if (!_didInit) {
                 Debug.LogError("ChessGame.TryMakeMove: Game not initialized!");
                 return false;
             }
-            var isSuccessful = board.TryMakeMove(isFromWhite, move, isWhiteTurn);
+            var isSuccessful = _board.TryMakeMove(isFromWhite, move, _isWhiteTurn);
             if (isSuccessful) {
-                isWhiteTurn = !isWhiteTurn;
+                _isWhiteTurn = !_isWhiteTurn;
                 moveHistory.Push(move);
-                OnBoardUpdate?.Invoke(this, board.pieceList);
+                OnBoardUpdate?.Invoke(this, _board.PieceList);
             }
 
             return isSuccessful;
@@ -46,12 +46,12 @@ namespace Core {
 
         // todo: make a faster version with piece or pieceName as parameter
         public List<Move> GetLegalMoves(bool isFromWhite) {
-            if (!didInit) {
+            if (!_didInit) {
                 Debug.LogError("ChessGame.GetLegalMoves: Game not initialized!");
                 return null;
             }
             
-            return MoveGenerator.GetLegalMoves(board, isFromWhite, isWhiteTurn);
+            return MoveGenerator.GetLegalMoves(_board, isFromWhite, _isWhiteTurn);
         }
     }
 

@@ -1,9 +1,9 @@
 public readonly struct Piece {
-    public readonly string name;
-    public readonly bool isWhite;
+    public readonly string Name;
+    public readonly bool IsWhite;
         
     public Piece(string name, bool isWhite) {
-        this.name = name;
-        this.isWhite = isWhite;
+        Name = name;
+        IsWhite = isWhite;
     }
 }

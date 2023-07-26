@@ -10,8 +10,8 @@ namespace UI {
         [SerializeField] private Color whiteColor = Color.white;
         [SerializeField] private Color blackColor = Color.black;
     
-        private Renderer[,] squareRenderers;
-        private SpriteRenderer[,] pieceRenderers;
+        private Renderer[,] _squareRenderers;
+        private SpriteRenderer[,] _pieceRenderers;
 
         private void Awake() {
             // subscribe to events
@@ -37,7 +37,7 @@ namespace UI {
             string pieceNamestring = "";
             foreach (var piece in pieces) {
                 if (EqualityComparer<Piece>.Default.Equals(piece, default)) pieceNamestring += "none ";
-                else pieceNamestring += piece.name + " ";
+                else pieceNamestring += piece.Name + " ";
             }
             Debug.Log(pieceNamestring);
             // todo: ...to here 
@@ -47,20 +47,20 @@ namespace UI {
                 for (int rank = 0; rank < GameManager.Height; rank++) {
                     var piece = pieces[BoardUtil.CoordFromFileRank(file, rank)];
                     if (EqualityComparer<Piece>.Default.Equals(piece,default)) {
-                        pieceRenderers[file, rank].enabled = false;
+                        _pieceRenderers[file, rank].enabled = false;
                     } else {
-                        pieceRenderers[file, rank].enabled = true;
-                        var pieceAsset = FindPieceAsset(piece.name);
-                        pieceRenderers[file, rank].name = pieceAsset.name;
-                        pieceRenderers[file, rank].sprite = piece.isWhite ? pieceAsset.whiteSprite : pieceAsset.blackSprite;
+                        _pieceRenderers[file, rank].enabled = true;
+                        var pieceAsset = FindPieceAsset(piece.Name);
+                        _pieceRenderers[file, rank].name = pieceAsset.name;
+                        _pieceRenderers[file, rank].sprite = piece.IsWhite ? pieceAsset.whiteSprite : pieceAsset.blackSprite;
                     }
                 }
             }
         }
 
         private void GenerateBoard() {
-            squareRenderers = new Renderer[8, 8];
-            pieceRenderers = new SpriteRenderer[8, 8];
+            _squareRenderers = new Renderer[8, 8];
+            _pieceRenderers = new SpriteRenderer[8, 8];
             Debug.Log("generating board ui");
         
             for (int file = 0; file < 8; file++) {
@@ -74,7 +74,7 @@ namespace UI {
                     square.gameObject.layer = LayerMask.NameToLayer("Board");
                     var squareRenderer = square.GetComponent<Renderer>();
                     squareRenderer.material.color = (file + rank) % 2 == 0 ? whiteColor : blackColor;
-                    squareRenderers[file, rank] = squareRenderer;
+                    _squareRenderers[file, rank] = squareRenderer;
 
                     // empty renderer for pieces
                     SpriteRenderer pieceRenderer = new GameObject ("Piece").AddComponent<SpriteRenderer>();
@@ -82,7 +82,7 @@ namespace UI {
                     pieceRenderer.transform.localPosition = new Vector3(0, pieceDepth, 0);
                     pieceRenderer.transform.localScale = Vector2.one * (boardScale * 0.07f);
                     pieceRenderer.transform.rotation = Quaternion.Euler(90, 0, 0);
-                    pieceRenderers[file, rank] = pieceRenderer;
+                    _pieceRenderers[file, rank] = pieceRenderer;
                 }
             }
         }
@@ -103,7 +103,7 @@ namespace UI {
         }
 
         private Vector3 PositionFromCoord(Coord coord, float depth = 0) {
-            return PositionFromCoord(coord.fileIndex, coord.rankIndex, depth);
+            return PositionFromCoord(coord.FileIndex, coord.RankIndex, depth);
         }
     }
 }

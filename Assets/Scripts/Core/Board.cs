@@ -3,20 +3,20 @@ using UnityEngine;
 
 namespace Core {
     public struct Board {
-        public readonly int width;
-        public readonly int height;
-        public Piece[] pieceList;
-        private bool didInit;
+        public readonly int Width;
+        public readonly int Height;
+        public Piece[] PieceList;
+        private bool _didInit;
 
-        public Board(int width = 8, int height = 8, string fen = BoardUtil.startFen) {
-            this.width = width;
-            this.height = height;
-            pieceList = new Piece[width * height];
-            didInit = false;
+        public Board(int width = 8, int height = 8, string fen = BoardUtil.StartFen) {
+            this.Width = width;
+            this.Height = height;
+            PieceList = new Piece[width * height];
+            _didInit = false;
         }
 
         public bool TryMakeMove(bool isFromWhite, Move move, bool isWhiteTurn) {
-            if (!didInit) {
+            if (!_didInit) {
                 Debug.LogError("Board.TryMakeMove: Board not initialized!");
                 return false;
             }
@@ -33,8 +33,8 @@ namespace Core {
                 return false;
             }
             // make the move
-            pieceList[move.toIndex] = pieceList[move.fromIndex];
-            pieceList[move.fromIndex] = default;
+            PieceList[move.ToIndex] = PieceList[move.FromIndex];
+            PieceList[move.FromIndex] = default;
             return true;
         }
         
@@ -42,13 +42,13 @@ namespace Core {
             SetupBoard();
         }
 
-        private void SetupBoard(string fen = BoardUtil.startFen) {
-            pieceList = BoardUtil.PiecesFromFen(fen);
-            if (pieceList.Length != width * height) {
+        private void SetupBoard(string fen = BoardUtil.StartFen) {
+            PieceList = BoardUtil.PiecesFromFen(fen);
+            if (PieceList.Length != Width * Height) {
                 Debug.LogError("FEN does not match board dimensions!");
-                Debug.Log(pieceList.Length + " != " + width * height);
+                Debug.Log(PieceList.Length + " != " + Width * Height);
             }
-            didInit = true;
+            _didInit = true;
         }
     }
 }

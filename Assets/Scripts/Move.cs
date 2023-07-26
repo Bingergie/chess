@@ -1,14 +1,14 @@
 public readonly struct Move {
-    public readonly int fromIndex;
-    public readonly int toIndex;
+    public readonly int FromIndex;
+    public readonly int ToIndex;
 
     public Move(int fromIndex, int toIndex) {
-        this.fromIndex = fromIndex;
-        this.toIndex = toIndex;
+        FromIndex = fromIndex;
+        ToIndex = toIndex;
     }
         
     public Move(Coord fromCoord, Coord toCoord) {
-        fromIndex = BoardUtil.IndexFromCoord(fromCoord);
-        toIndex = BoardUtil.IndexFromCoord(toCoord);
+        FromIndex = BoardUtil.IndexFromCoord(fromCoord);
+        ToIndex = BoardUtil.IndexFromCoord(toCoord);
     }
 }

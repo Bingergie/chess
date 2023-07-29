@@ -28,7 +28,7 @@ namespace Client {
             Connect();
         }
 
-        private void Update() {
+        private void FixedUpdate() {
             Client.Update();
         }
 

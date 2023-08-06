@@ -6,5 +6,14 @@ namespace UI {
         public string pieceName;
         public Sprite whiteSprite;
         public Sprite blackSprite;
+        
+        
+        public static PieceAsset FindPieceAsset(string pieceName) {
+            var pieceAsset = Resources.Load<PieceAsset>("Pieces/" + pieceName);
+            if (pieceAsset == null) {
+                Debug.LogError("PieceAsset.FindPieceAsset: PieceAsset not found for piece name " + pieceName);
+            }
+            return pieceAsset;
+        }
     }
 }

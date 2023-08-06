@@ -43,7 +43,7 @@ public static class BoardUtil {
             if (character == '/') {
             } else if (char.IsDigit(character)) {
                 for (int i = 0; i < int.Parse(character.ToString()); i++) 
-                    pieceList.Add(default);
+                    pieceList.Add(Piece.None);
             } else {
                 var pieceName = PieceNames[char.ToUpper(character)];
                 var isWhite = char.IsUpper(character);

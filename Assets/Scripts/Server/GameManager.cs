@@ -43,5 +43,15 @@ namespace Server {
         }
 
         #endregion
+
+        public ChessGame GetGame(ushort fromClientId) {
+            foreach (var game in _games) {
+                if (game.PlayerIds[0] == fromClientId || game.PlayerIds[1] == fromClientId) {
+                    return game;
+                }
+            }
+
+            return null;
+        }
     }
 }

@@ -7,5 +7,6 @@ namespace Server {
         }
 
         public abstract void Enter();
+        public abstract void MakeMove(Move move, bool isFromWhite);
     }
 }

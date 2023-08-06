@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System;
+using Riptide;
 using Server.ChessGameStates;
+using Shared;
 using UnityEngine;
 
 namespace Server {
@@ -40,6 +42,29 @@ namespace Server {
         
         public void SetWhitePlayer(ushort playerId) {
             WhitePlayerId = playerId;
+        }
+        
+        [MessageHandler((ushort)ClientToServerId.MakeMove)]
+        private static void HandleMakeMove(ushort fromClientId, Message message) {
+            var move = message.GetSerializable<Move>();
+            var game = GameManager.Instance.GetGame(fromClientId);
+            game.Move(move, game.IsWhite(fromClientId));
+        }
+        
+        private void Move(Move move, bool isFromWhite) {
+            _currentState.MakeMove(move, isFromWhite);
+        }
+
+        public void PushMove(Move move) {
+            MoveHistory.Push(move);
+        }
+
+        public void SetBoard(Piece[] board) {
+            Board = board;
+        }
+
+        public void SetIsWhiteTurn(bool isWhiteTurn) {
+            IsWhiteTurn = isWhiteTurn;
         }
     }
 }

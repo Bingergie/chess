@@ -14,9 +14,14 @@ namespace Server.ChessGameStates {
             Game.ChangeState(typeof(ChessPlayingState));
         }
 
+        public override void MakeMove(Move move, bool isFromWhite) {
+            Debug.Log("can't make move now");
+        }
+
         private void SendGameStartMessage() {
             var message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.GameStart);
             message.Add(Game.WhitePlayerId);
+            message.Add(BoardUtil.PiecesFromFen());
             
             NetworkManager.Instance.Server.Send(message, Game.PlayerIds[0]);
             NetworkManager.Instance.Server.Send(message, Game.PlayerIds[1]);

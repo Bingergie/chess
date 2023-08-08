@@ -13,8 +13,8 @@ namespace Client {
         [SerializeField] private Color blackColor = Color.black;
         [SerializeField] private Color highlightColor = Color.yellow;
 
-        private GameObject[,] _squares;
-        private GameObject[,] _pieces;
+        private GameObject[] _squares;
+        private GameObject[] _pieces;
         private Piece[] _board;
         private Coord _selectedSquare;
 
@@ -30,14 +30,13 @@ namespace Client {
             PlayerManager.Instance.OnPieceDragged += DragPiece;*/
 
             // initialize arrays
-            _squares = new GameObject[8, 8];
-            _pieces = new GameObject[8, 8];
+            _squares = new GameObject[64];
+            _pieces = new GameObject[64];
             _board = new Piece[64];
-            
-            whiteIsBottom = GameManager.IsWhite;
+            _selectedSquare = Coord.None;
 
             // GenerateBoard();
-            // UpdateBoard(this, BoardUtil.PiecesFromFen());
+            // UpdatePieces(this, BoardUtil.PiecesFromFen());
         }
 
         private void OnDestroy() {
@@ -49,7 +48,7 @@ namespace Client {
             PlayerManager.OnPieceDragged -= DragPiece;
         }
 
-        private void UpdateBoard(object sender, Piece[] pieces) {
+        private void UpdatePieces(Piece[] pieces) {
             /*// todo: delete this section from here...
             Debug.Log("updating board ui");
             string pieceNamestring = "";
@@ -61,8 +60,27 @@ namespace Client {
             // todo: ...to here
             */
 
+            int i = 0;
+            foreach (var piece in pieces) {
+                if (piece == Piece.None) {
+                    _pieces[i].GetComponent<SpriteRenderer>().enabled = false;
+                    _pieces[i].name = "None";
+                    _board[i] = Piece.None;
+                    i++;
+                    continue;
+                }
 
-            for (int file = 0; file < 8; file++) {
+                var pieceAsset = PieceAsset.FindPieceAsset(piece.Name);
+                _pieces[i].name = pieceAsset.name;
+                _pieces[i].GetComponent<SpriteRenderer>().enabled = true;
+                _pieces[i].GetComponent<SpriteRenderer>().sprite =
+                    piece.IsWhite ? pieceAsset.whiteSprite : pieceAsset.blackSprite;
+                _board[i] = piece;
+                i++;
+            }
+
+
+            /*for (int file = 0; file < 8; file++) {
                 for (int rank = 0; rank < 8; rank++) {
                     var index = BoardUtil.IndexFromCoord(file, rank);
                     var piece = pieces[index];
@@ -80,11 +98,32 @@ namespace Client {
                         _board[index] = Piece.None;
                     }
                 }
-            }
+            }*/
         }
 
         private void GenerateBoard(object sender, Piece[] pieces) {
-            for (int file = 0; file < 8; file++) {
+            whiteIsBottom = GameManager.IsWhite;
+            for (int i = 0; i < 64; i++) {
+                var coord = BoardUtil.CoordFromIndex(i);
+                var square = GameObject.CreatePrimitive(PrimitiveType.Cube).transform;
+                square.localScale = new Vector3(boardScale, 0.1f, boardScale);
+                square.parent = transform;
+                square.localPosition = PositionFromCoord(coord, boardDepth);
+                square.gameObject.name = BoardUtil.NameFromCoord(coord);
+                square.gameObject.layer = LayerMask.NameToLayer("Board");
+                var squareRenderer = square.GetComponent<Renderer>();
+                squareRenderer.material.color = coord.IsLightSquare() ? whiteColor : blackColor;
+                _squares[i] = square.gameObject;
+
+                var pieceTransform = new GameObject("Piece").AddComponent<SpriteRenderer>().transform;
+                pieceTransform.parent = square;
+                pieceTransform.localPosition = new Vector3(0, pieceDepth, 0);
+                pieceTransform.localScale = Vector2.one * (boardScale * 0.07f);
+                pieceTransform.localRotation = Quaternion.Euler(90, 0, 0);
+                pieceTransform.gameObject.layer = LayerMask.NameToLayer("Piece");
+                _pieces[i] = pieceTransform.gameObject;
+            }
+            /*for (int file = 0; file < 8; file++) {
                 for (int rank = 0; rank < 8; rank++) {
                     // square
                     var square = GameObject.CreatePrimitive(PrimitiveType.Cube).transform;
@@ -105,24 +144,24 @@ namespace Client {
                     piece.gameObject.layer = LayerMask.NameToLayer("Piece");
                     _pieces[file, rank] = piece.gameObject;
                 }
-            }
+            }*/
 
-            UpdateBoard(sender, pieces);
+            UpdatePieces(pieces);
         }
-        
+
         private void MoveMade(object sender, Move move) {
             var pieces = _board;
             pieces[move.ToIndex] = pieces[move.FromIndex];
             pieces[move.FromIndex] = Piece.None;
-            UpdateBoard(sender, pieces);
+            UpdatePieces(pieces);
         }
 
         private void ToggleHighlightSquare(object sender, Coord coord) {
-            Debug.Log("Coord: " + coord.RankIndex + coord.FileIndex);
-            var square = _squares[coord.FileIndex, coord.RankIndex];
+            var index = BoardUtil.IndexFromCoord(coord);
+            var square = _squares[index];
             var squareRenderer = square.GetComponent<Renderer>();
             squareRenderer.material.color = squareRenderer.material.color == highlightColor
-                ? (coord.FileIndex + coord.RankIndex) % 2 == 0 ? whiteColor : blackColor
+                ? coord.IsLightSquare() ? whiteColor : blackColor
                 : highlightColor;
         }
 

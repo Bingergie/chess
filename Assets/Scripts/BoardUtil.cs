@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 public static class BoardUtil {
@@ -28,6 +29,10 @@ public static class BoardUtil {
         return new Coord(FileNames.IndexOf(name[0]), RankNames.IndexOf(name[1]));
     }
     
+    public static Coord CoordFromIndex(int index) {
+        return new Coord(index % GameManager.Width, index / GameManager.Width);
+    }
+    
     public static int IndexFromCoord(Coord coord) {
         return coord.RankIndex * GameManager.Width + coord.FileIndex;
     }
@@ -37,7 +42,30 @@ public static class BoardUtil {
     }
     
     public static Piece[] PiecesFromFen(string fen = StartFen) {
-        var pieceList = new List<Piece>();
+        var pieceList = new Piece[64];
+        var fenParts = fen.Split(' ');
+        var fenBoard = fenParts[0].Split('/');
+        var currentRank = 7;
+        foreach (var rank in fenBoard) {
+            var currentFile = 0;
+            foreach (var character in rank) {
+                if (char.IsDigit(character)) {
+                    for (int i = 0; i < int.Parse(character.ToString()); i++) {
+                        pieceList[IndexFromCoord(currentFile, currentRank)] = Piece.None;
+                        currentFile++;
+                    }
+                } else {
+                    var pieceName = PieceNames[char.ToUpper(character)];
+                    var isWhite = char.IsUpper(character);
+                    pieceList[IndexFromCoord(currentFile, currentRank)] = new Piece(pieceName, isWhite);
+                    currentFile++;
+                }
+            }
+            currentRank--;
+        }
+        return pieceList;
+        
+        /*var pieceList = new List<Piece>();
         var fenParts = fen.Split(' ');
         var fenBoard = fenParts[0];
         foreach (var character in fenBoard) {
@@ -52,7 +80,8 @@ public static class BoardUtil {
             }
         }
         // reverse the list so that the pieces are in the correct order
-        pieceList.Reverse();
-        return pieceList.ToArray();
+        //pieceList.Reverse();
+        // flip the board so that white is on the bottom
+        return pieceList.ToArray();*/
     }
 }

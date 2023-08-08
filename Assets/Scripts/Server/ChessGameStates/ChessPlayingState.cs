@@ -25,7 +25,6 @@ namespace Server.ChessGameStates {
         }
 
         private void SendMoveMessage(Move move) {
-            Debug.Log(move.FromIndex + " " + move.ToIndex);
             var message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.MoveMade);
             message.Add(move);
             NetworkManager.Instance.Server.Send(message, Game.PlayerIds[0]);

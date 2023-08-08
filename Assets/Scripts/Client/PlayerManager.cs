@@ -34,10 +34,10 @@ namespace Client {
 
             if (Input.GetMouseButtonUp(0)) {
                 if (_selectedSquare != Coord.None) {
-                    OnSquareDeselected?.Invoke(this, _selectedSquare);
-                    if (GetTargetSquare(out var targetCoord)) {
+                    if (GetTargetSquare(out var targetCoord) && targetCoord != _selectedSquare) {
                         TryMakeMove(_selectedSquare, targetCoord);
                     }
+                    OnSquareDeselected?.Invoke(this, _selectedSquare);
                     _selectedSquare = Coord.None;
                 }
             }

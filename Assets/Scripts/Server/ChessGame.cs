@@ -1,9 +1,6 @@
 using System.Collections.Generic;
 using System;
-using Riptide;
 using Server.ChessGameStates;
-using Shared;
-using UnityEngine;
 
 namespace Server {
     public class ChessGame {
@@ -17,42 +14,36 @@ namespace Server {
 
         private ChessBaseState _currentState;
         private readonly Dictionary<Type, ChessBaseState> _stateDictionary;
-        
+
         public ChessGame(ushort[] playerIds, int width = 8, int height = 8) {
             PlayerIds = playerIds;
             Width = width;
             Height = height;
             Board = new Piece[Width * Height];
+            MoveHistory = new Stack<Move>();
             _stateDictionary = new Dictionary<Type, ChessBaseState> {
                 { typeof(ChessStartState), new ChessStartState(this) },
                 { typeof(ChessPlayingState), new ChessPlayingState(this) },
             };
             ChangeState(typeof(ChessStartState));
-            
         }
-        
-        public void ChangeState(Type stateType) {
-            _currentState = _stateDictionary[stateType];
-            _currentState.Enter();
+
+        public void MakeMove(Move move, bool isFromWhite) {
+            _currentState.MakeMove(move, isFromWhite);
         }
         
         public bool IsWhite(int playerId) {
             return playerId == WhitePlayerId;
         }
-        
+
+        // methods below should only be called by states
+        public void ChangeState(Type stateType) {
+            _currentState = _stateDictionary[stateType];
+            _currentState.Enter();
+        }
+
         public void SetWhitePlayer(ushort playerId) {
             WhitePlayerId = playerId;
-        }
-        
-        [MessageHandler((ushort)ClientToServerId.MakeMove)]
-        private static void HandleMakeMove(ushort fromClientId, Message message) {
-            var move = message.GetSerializable<Move>();
-            var game = GameManager.Instance.GetGame(fromClientId);
-            game.Move(move, game.IsWhite(fromClientId));
-        }
-        
-        private void Move(Move move, bool isFromWhite) {
-            _currentState.MakeMove(move, isFromWhite);
         }
 
         public void PushMove(Move move) {

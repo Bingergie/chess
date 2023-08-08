@@ -1,6 +1,7 @@
 namespace Shared {
     public enum ServerToClientId : ushort {
         PairingSuccess,
-        GameStart
+        GameStart,
+        MoveMade
     }
 }

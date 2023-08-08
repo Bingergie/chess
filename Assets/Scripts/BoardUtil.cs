@@ -1,7 +1,4 @@
 using System.Collections.Generic;
-using Core;
-using UI;
-using UnityEngine;
 
 public static class BoardUtil {
     public const string FileNames = "abcdefgh";
@@ -35,6 +32,10 @@ public static class BoardUtil {
         return coord.RankIndex * GameManager.Width + coord.FileIndex;
     }
     
+    public static int IndexFromCoord(int file, int rank) {
+        return rank * GameManager.Width + file;
+    }
+    
     public static Piece[] PiecesFromFen(string fen = StartFen) {
         var pieceList = new List<Piece>();
         var fenParts = fen.Split(' ');
@@ -53,9 +54,5 @@ public static class BoardUtil {
         // reverse the list so that the pieces are in the correct order
         pieceList.Reverse();
         return pieceList.ToArray();
-    }
-
-    public static int CoordFromFileRank(int file, int rank) {
-        return rank * GameManager.Width + file;
     }
 }

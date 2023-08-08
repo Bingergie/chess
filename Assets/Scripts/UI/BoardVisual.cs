@@ -45,7 +45,7 @@ namespace UI {
 
             for (int file = 0; file < GameManager.Width; file++) {
                 for (int rank = 0; rank < GameManager.Height; rank++) {
-                    var piece = pieces[BoardUtil.CoordFromFileRank(file, rank)];
+                    var piece = pieces[BoardUtil.IndexFromCoord(file, rank)];
                     if (EqualityComparer<Piece>.Default.Equals(piece,default)) {
                         _pieceRenderers[file, rank].enabled = false;
                     } else {

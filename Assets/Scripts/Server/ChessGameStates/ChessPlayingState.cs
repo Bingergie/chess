@@ -11,9 +11,9 @@ namespace Server.ChessGameStates {
         }
 
         public override void MakeMove(Move move, bool isFromWhite) {
-            if (isFromWhite != Game.IsWhiteTurn) {
+            /*if (isFromWhite != Game.IsWhiteTurn) {
                 Debug.Log("not your turn");
-            }
+            }*/
             // todo: check if move is legal
             Game.PushMove(move);
             var board = Game.Board;
@@ -21,6 +21,15 @@ namespace Server.ChessGameStates {
             board[move.FromIndex] = Piece.None;
             Game.SetBoard(board);
             Game.SetIsWhiteTurn(!Game.IsWhiteTurn);
+            SendMoveMessage(move);
+        }
+
+        private void SendMoveMessage(Move move) {
+            Debug.Log(move.FromIndex + " " + move.ToIndex);
+            var message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.MoveMade);
+            message.Add(move);
+            NetworkManager.Instance.Server.Send(message, Game.PlayerIds[0]);
+            NetworkManager.Instance.Server.Send(message, Game.PlayerIds[1]);
         }
     }
 }

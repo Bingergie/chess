@@ -1,9 +1,11 @@
 using System;
+using Riptide;
 
-public readonly struct Coord : IComparable<Coord>, IEquatable<Coord> {
+public struct Coord : IEquatable<Coord>, IMessageSerializable {
+    public static readonly Coord None = default;
 
-    public readonly int FileIndex;
-    public readonly int RankIndex;
+    public int FileIndex;
+    public int RankIndex;
 
     public Coord (int fileIndex, int rankIndex) {
         FileIndex = fileIndex;
@@ -12,18 +14,6 @@ public readonly struct Coord : IComparable<Coord>, IEquatable<Coord> {
 
     public bool IsLightSquare () {
         return (FileIndex + RankIndex) % 2 != 0;
-    }
-
-    public int CompareTo (Coord other) {
-        return (FileIndex == other.FileIndex && RankIndex == other.RankIndex) ? 0 : 1;
-    }
-    
-    public static bool operator == (Coord a, Coord b) {
-        return a.CompareTo(b) == 0;
-    }
-
-    public static bool operator !=(Coord a, Coord b) {
-        return !(a == b);
     }
     
     public bool Equals(Coord other) {
@@ -36,5 +26,23 @@ public readonly struct Coord : IComparable<Coord>, IEquatable<Coord> {
 
     public override int GetHashCode() {
         return HashCode.Combine(FileIndex, RankIndex);
+    }
+    
+    public static bool operator ==(Coord left, Coord right) {
+        return left.Equals(right);
+    }
+    
+    public static bool operator !=(Coord left, Coord right) {
+        return !left.Equals(right);
+    }
+
+    public void Serialize(Message message) {
+        message.Add(FileIndex);
+        message.Add(RankIndex);
+    }
+
+    public void Deserialize(Message message) {
+        FileIndex = message.GetInt();
+        RankIndex = message.GetInt();
     }
 }

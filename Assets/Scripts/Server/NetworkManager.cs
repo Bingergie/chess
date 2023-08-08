@@ -25,6 +25,10 @@ namespace Server {
             Server.Start(port, maxClientCount);
         }
 
+        private void OnDestroy() {
+            Server.Stop();
+        }
+
         private void FixedUpdate() {
             Server.Update();
         }

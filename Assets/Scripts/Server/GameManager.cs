@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Riptide;
 using Shared;
 using UnityEngine;
@@ -41,17 +42,18 @@ namespace Server {
             Message message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.PairingSuccess);
             NetworkManager.Instance.Server.Send(message, _waitingPlayers[0]);
         }
+        
+        [MessageHandler((ushort)ClientToServerId.MakeMove)]
+        private static void HandleMakeMove(ushort fromClientId, Message message) {
+            var move = message.GetSerializable<Move>();
+            var game = GameManager.Instance.GetGame(fromClientId);
+            game.MakeMove(move, game.IsWhite(fromClientId));
+        }
 
         #endregion
 
-        public ChessGame GetGame(ushort fromClientId) {
-            foreach (var game in _games) {
-                if (game.PlayerIds[0] == fromClientId || game.PlayerIds[1] == fromClientId) {
-                    return game;
-                }
-            }
-
-            return null;
+        private ChessGame GetGame(ushort fromClientId) {
+            return _games.FirstOrDefault(game => game.PlayerIds[0] == fromClientId || game.PlayerIds[1] == fromClientId);
         }
     }
 }
